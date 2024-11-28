@@ -124,3 +124,26 @@ while True:
         break
     else:
         print("Lựa chọn không hợp lệ, vui lòng chọn lại.")
+
+
+
+# Ứng dụng quản lý thời khóa biểu với các chức năng:
+# 1. Thêm sự kiện mới (kiểm tra và xử lý trùng lặp).
+# 2. Xem toàn bộ lịch trình.
+# 3. Chỉnh sửa hoặc xóa sự kiện.
+# 4. Thoát chương trình.
+
+
+# Chức năng chính:
+# 1. Hiển thị menu: Cho phép người dùng chọn chức năng (thêm, xem, chỉnh sửa, thoát).
+# 2. Thêm sự kiện: 
+#    - Nhập thông tin sự kiện (tháng, tuần, ngày, thời gian, chi tiết).
+#    - Kiểm tra trùng lặp, cung cấp tùy chọn hợp nhất nếu cần.
+# 3. Xem lịch trình: 
+#    - Hiển thị danh sách sự kiện, nếu trống thông báo "Không có sự kiện".
+# 4. Chỉnh sửa sự kiện:
+#    - Tìm sự kiện theo ngày.
+#    - Cho phép thêm công việc mới, sửa thông tin hoặc xóa sự kiện.
+# 5. Thoát: Kết thúc chương trình.
+
+
