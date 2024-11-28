@@ -127,13 +127,3 @@ while True:
         break
     else:
         print("Lựa chọn không hợp lệ, vui lòng chọn lại.")
-
-
-
-# Các nâng cấp và cải tiến
-# Hàm Được Tổ Chức Lại: Mỗi hàm bây giờ chỉ tập trung vào một nhiệm vụ cụ thể, giúp mã nguồn dễ đọc và dễ bảo trì hơn.
-# Cải Tiến Kiểm Tra Trùng Lặp: Khi thêm sự kiện, chương trình kiểm tra trùng lặp và cung cấp tùy chọn hợp nhất nếu cần.
-# Tương Tác Người Dùng Tốt Hơn: Mỗi tùy chọn trong menu có hướng dẫn rõ ràng, và các lỗi được xử lý để tránh chương trình bị dừng đột ngột.
-# Cấu Trúc Dữ Liệu Tối Giản: Các sự kiện được lưu trữ trong dạng từ điển, và việc truy xuất dữ liệu trở nên ngắn gọn và hiệu quả hơn.
-# Xử Lý Lỗi: try-except trong hàm sua_su_kien giúp ngăn chặn các lỗi nhập không hợp lệ của người dùng.
-# Cơ Chế Vòng Lặp và Thoát: Vòng lặp được tối ưu để thoát chương trình hoặc thoát các vòng lặp cụ thể khi cần thiết.
