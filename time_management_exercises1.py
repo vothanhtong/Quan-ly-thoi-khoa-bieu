@@ -127,3 +127,87 @@ while True:
         break
     else:
         print("Lựa chọn không hợp lệ, vui lòng chọn lại.")
+
+
+
+# V2 
+
+
+# Danh sách tài khoản và lịch trình sự kiện
+tai_khoan_nguoi_dung = {}
+lich_trinh_su_kien = []
+
+# Hàm tạo tài khoản mới
+def tao_tai_khoan():
+    print("\n--- TẠO TÀI KHOẢN ---")
+    while True:
+        ten = input("Tên đăng nhập: ").strip()
+        if ten in tai_khoan_nguoi_dung:
+            print("Tên đăng nhập đã tồn tại.")
+            continue
+        mk = input("Mật khẩu: ").strip()
+        if mk == input("Xác nhận mật khẩu: ").strip():
+            tai_khoan_nguoi_dung[ten] = mk
+            print("Tài khoản đã tạo!")
+            return
+        print("Mật khẩu không khớp.")
+
+# Hàm đăng nhập
+def dang_nhap():
+    print("\n--- ĐĂNG NHẬP ---")
+    ten = input("Tên đăng nhập: ").strip()
+    if tai_khoan_nguoi_dung.get(ten) == input("Mật khẩu: ").strip():
+        print(f"Chào mừng {ten}!")
+        return True
+    print("Sai tên đăng nhập hoặc mật khẩu.")
+    return False
+
+# Hàm thêm sự kiện mới
+def them_su_kien():
+    print("\n--- THÊM SỰ KIỆN ---")
+    su_kien = {key: input(f"{key}: ").strip() for key in ['Tháng', 'Tuần', 'Ngày', 'Thời gian', 'Tên', 'Chi tiết', 'Quan trọng']}
+    if any(e['Ngày'] == su_kien['Ngày'] and e['Tên'] == su_kien['Tên'] for e in lich_trinh_su_kien):
+        print("Sự kiện trùng lặp!")
+        return
+    lich_trinh_su_kien.append(su_kien)
+    print("Đã thêm sự kiện.")
+
+# Hàm hiển thị lịch trình
+def xem_lich_trinh():
+    print("\n--- LỊCH TRÌNH ---")
+    if not lich_trinh_su_kien:
+        print("Không có sự kiện nào.")
+        return
+    for i, e in enumerate(lich_trinh_su_kien, 1):
+        print(f"{i}. {e}")
+
+# Hàm xử lý đăng nhập và tính năng
+def menu_sau_dang_nhap():
+    while True:
+        lua_chon = input("\n1. Thêm Sự Kiện\n2. Xem Lịch Trình\n3. Đăng Xuất\nChọn: ").strip()
+        if lua_chon == '1':
+            them_su_kien()
+        elif lua_chon == '2':
+            xem_lich_trinh()
+        elif lua_chon == '3':
+            print("Đã đăng xuất.")
+            break
+        else:
+            print("Không hợp lệ.")
+
+# Hàm chính
+def chuong_trinh():
+    while True:
+        chon = input("\n1. Đăng Nhập\n2. Tạo Tài Khoản\n3. Thoát\nChọn: ").strip()
+        if chon == '1' and dang_nhap():
+            menu_sau_dang_nhap()
+        elif chon == '2':
+            tao_tai_khoan()
+        elif chon == '3':
+            print("Thoát chương trình.")
+            break
+        else:
+            print("Không hợp lệ.")
+
+# Chạy chương trình
+chuong_trinh()
