@@ -1,143 +1,41 @@
-# Danh sách toàn cục để lưu dữ liệu sự kiện
-lich_trinh_su_kien = []
+import json
+from datetime import datetime
 
-# Hiển thị các tùy chọn trong menu
-def hien_thi_menu():
-    print("\n--- MENU ---")
-    print("1. Thêm Sự Kiện Mới")
-    print("2. Xem Lịch Trình")
-    print("3. Chỉnh Sửa Sự Kiện")
-    print("4. Thoát")
-
-# Hàm thêm sự kiện mới, với tính năng kiểm tra trùng lặp và hợp nhất nếu cần
-def them_su_kien():
-    while True:
-        su_kien = {
-            'Tháng': input("Nhập tháng: "),
-            'Tuần': input("Nhập tuần: "),
-            'Ngày': input("Nhập ngày: "),
-            'Thời gian bắt đầu': input("Nhập thời gian bắt đầu: "),
-            'Thời gian kết thúc': input("Nhập thời gian kết thúc: "),
-            'Tên sự kiện': input("Nhập tên sự kiện: "),
-            'Chi tiết sự kiện': input("Nhập chi tiết sự kiện: "),
-            'Quan trọng': input("Sự kiện này có quan trọng không? (Có/Không): ")
-        }
-
-        # Kiểm tra sự kiện trùng lặp dựa trên ngày và tên sự kiện
-        su_kien_trung_lap = next((e for e in lich_trinh_su_kien if
-                                  e['Tháng'] == su_kien['Tháng'] and
-                                  e['Tuần'] == su_kien['Tuần'] and
-                                  e['Ngày'] == su_kien['Ngày'] and
-                                  e['Tên sự kiện'] == su_kien['Tên sự kiện']), None)
-
-        if su_kien_trung_lap:
-            print(f"Sự kiện '{su_kien['Tên sự kiện']}' đã tồn tại vào ngày này.")
-            lua_chon_hop_nhat = input("Bạn có muốn hợp nhất sự kiện không? (Có/Không): ").strip().lower()
-            if lua_chon_hop_nhat == 'có':
-                # Hợp nhất thông tin chi tiết nếu người dùng đồng ý
-                su_kien_trung_lap['Chi tiết sự kiện'] += " | " + su_kien['Chi tiết sự kiện']
-                su_kien_trung_lap['Thời gian bắt đầu'] = min(su_kien_trung_lap['Thời gian bắt đầu'], su_kien['Thời gian bắt đầu'])
-                su_kien_trung_lap['Thời gian kết thúc'] = max(su_kien_trung_lap['Thời gian kết thúc'], su_kien['Thời gian kết thúc'])
-                su_kien_trung_lap['Quan trọng'] = 'Có' if 'Có' in (su_kien_trung_lap['Quan trọng'], su_kien['Quan trọng']) else 'Không'
-                print("Sự kiện đã được hợp nhất.")
-            else:
-                print("Sự kiện không được thêm.")
-        else:
-            # Thêm sự kiện mới vào lịch trình nếu không có trùng lặp
-            lich_trinh_su_kien.append(su_kien)
-            print(f"Sự kiện '{su_kien['Tên sự kiện']}' đã được thêm vào lịch trình.\n")
-
-        # Thoát vòng lặp nếu người dùng không muốn thêm sự kiện khác
-        if input("Thêm sự kiện khác? Nhập 'end' để dừng: ").strip().lower() == 'end':
-            break
-
-# Hàm để hiển thị tất cả các sự kiện trong lịch trình
-def xem_lich_trinh():
-    if not lich_trinh_su_kien:
-        print("Không có sự kiện nào được lên lịch.")
-    else:
-        for i, su_kien in enumerate(lich_trinh_su_kien, start=1):
-            print(f"\n--- Sự kiện {i} ---")
-            for key, value in su_kien.items():
-                print(f"{key}: {value}")
-
-# Hàm chỉnh sửa hoặc xóa sự kiện dựa trên ngày cụ thể
-def sua_su_kien():
-    if not lich_trinh_su_kien:
-        print("Không có sự kiện nào để chỉnh sửa.")
-        return
-
-    thang, tuan, ngay = input("Nhập tháng: "), input("Nhập tuần: "), input("Nhập ngày: ")
-
-    # Tìm các sự kiện vào ngày đã chọn
-    su_kien_theo_ngay = [e for e in lich_trinh_su_kien if e['Tháng'] == thang and e['Tuần'] == tuan and e['Ngày'] == ngay]
-    
-    if not su_kien_theo_ngay:
-        print("Không tìm thấy sự kiện nào vào ngày này.")
-        return
-
-    # Hiển thị các sự kiện để người dùng chọn
-    print("\nCác sự kiện vào ngày đã chọn:")
-    for idx, su_kien in enumerate(su_kien_theo_ngay, start=1):
-        print(f"{idx}. {su_kien['Tên sự kiện']}")
-
-    # Kiểm tra lựa chọn của người dùng
-    try:
-        chi_so_chon = int(input("Chọn số của sự kiện bạn muốn chỉnh sửa: ")) - 1
-        su_kien_chon = su_kien_theo_ngay[chi_so_chon]
-    except (ValueError, IndexError):
-        print("Lựa chọn không hợp lệ.")
-        return
-
-    # Menu cho các tùy chọn chỉnh sửa
-    print("\n1. Thêm chi tiết\n2. Chỉnh sửa chi tiết\n3. Xóa sự kiện")
-    lua_chon = input("Chọn tùy chọn (1/2/3): ").strip()
-
-    if lua_chon == '1':
-        su_kien_chon['Chi tiết sự kiện'] += " | " + input("Nhập chi tiết bổ sung: ")
-        print("Đã thêm chi tiết.")
-    
-    elif lua_chon == '2':
-        su_kien_chon.update({
-            'Thời gian bắt đầu': input("Nhập thời gian bắt đầu mới: "),
-            'Thời gian kết thúc': input("Nhập thời gian kết thúc mới: "),
-            'Chi tiết sự kiện': input("Nhập chi tiết mới: "),
-            'Quan trọng': input("Sự kiện này có quan trọng không? (Có/Không): ")
-        })
-        print("Sự kiện đã được cập nhật.")
-
-    elif lua_chon == '3':
-        lich_trinh_su_kien.remove(su_kien_chon)
-        print("Sự kiện đã bị xóa.")
-    else:
-        print("Tùy chọn không hợp lệ.")
-
-# Vòng lặp chính để tương tác với menu
-while True:
-    hien_thi_menu()
-    lua_chon_nguoi_dung = input("Chọn một tùy chọn (1/2/3/4): ").strip()
-    if lua_chon_nguoi_dung == '1':
-        them_su_kien()
-    elif lua_chon_nguoi_dung == '2':
-        xem_lich_trinh()
-    elif lua_chon_nguoi_dung == '3':
-        sua_su_kien()
-    elif lua_chon_nguoi_dung == '4':
-        print("Thoát chương trình.")
-        break
-    else:
-        print("Lựa chọn không hợp lệ, vui lòng chọn lại.")
-
-
-
-# V2 
-
-
-# Danh sách tài khoản và lịch trình sự kiện
+# Danh sách lưu trữ tài khoản và sự kiện
 tai_khoan_nguoi_dung = {}
 lich_trinh_su_kien = []
 
-# Hàm tạo tài khoản mới
+# Tệp lưu trữ dữ liệu
+FILE_TAI_KHOAN = "tai_khoan.json"
+FILE_LICH_TRINH = "lich_trinh.json"
+
+# Tải dữ liệu từ tệp JSON (nếu có)
+def tai_du_lieu():
+    global tai_khoan_nguoi_dung, lich_trinh_su_kien
+    try:
+        with open(FILE_TAI_KHOAN, 'r', encoding='utf-8') as f:
+            tai_khoan_nguoi_dung = json.load(f)
+        with open(FILE_LICH_TRINH, 'r', encoding='utf-8') as f:
+            lich_trinh_su_kien = json.load(f)
+    except FileNotFoundError:
+        print("Không tìm thấy dữ liệu cũ, khởi tạo mới.")
+
+# Lưu dữ liệu vào tệp JSON
+def luu_du_lieu():
+    with open(FILE_TAI_KHOAN, 'w', encoding='utf-8') as f:
+        json.dump(tai_khoan_nguoi_dung, f, ensure_ascii=False, indent=4)
+    with open(FILE_LICH_TRINH, 'w', encoding='utf-8') as f:
+        json.dump(lich_trinh_su_kien, f, ensure_ascii=False, indent=4)
+
+# Hiển thị menu
+def hien_thi_menu(chuc_nang):
+    menus = {
+        "main": "\n--- MENU CHÍNH ---\n1. Đăng Nhập\n2. Tạo Tài Khoản\n3. Thoát",
+        "sau_dang_nhap": "\n--- MENU SỰ KIỆN ---\n1. Thêm Sự Kiện\n2. Xem Lịch Trình\n3. Chỉnh Sửa Sự Kiện\n4. Tìm Kiếm Sự Kiện\n5. Sắp Xếp Lịch Trình\n6. Đăng Xuất"
+    }
+    print(menus[chuc_nang])
+
+# Tạo tài khoản mới
 def tao_tai_khoan():
     print("\n--- TẠO TÀI KHOẢN ---")
     while True:
@@ -145,69 +43,174 @@ def tao_tai_khoan():
         if ten in tai_khoan_nguoi_dung:
             print("Tên đăng nhập đã tồn tại.")
             continue
-        mk = input("Mật khẩu: ").strip()
-        if mk == input("Xác nhận mật khẩu: ").strip():
-            tai_khoan_nguoi_dung[ten] = mk
-            print("Tài khoản đã tạo!")
+        mat_khau = input("Mật khẩu: ").strip()
+        if mat_khau == input("Xác nhận mật khẩu: ").strip():
+            tai_khoan_nguoi_dung[ten] = mat_khau
+            luu_du_lieu()
+            print("Tài khoản đã được tạo thành công!")
             return
-        print("Mật khẩu không khớp.")
+        print("Mật khẩu không khớp, thử lại.")
 
-# Hàm đăng nhập
+# Đăng nhập
 def dang_nhap():
     print("\n--- ĐĂNG NHẬP ---")
     ten = input("Tên đăng nhập: ").strip()
-    if tai_khoan_nguoi_dung.get(ten) == input("Mật khẩu: ").strip():
-        print(f"Chào mừng {ten}!")
-        return True
+    mat_khau = input("Mật khẩu: ").strip()
+    if tai_khoan_nguoi_dung.get(ten) == mat_khau:
+        print(f"Chào mừng {ten} đã đăng nhập!")
+        return ten
     print("Sai tên đăng nhập hoặc mật khẩu.")
-    return False
+    return None
 
-# Hàm thêm sự kiện mới
+# Thêm sự kiện mới
 def them_su_kien():
     print("\n--- THÊM SỰ KIỆN ---")
-    su_kien = {key: input(f"{key}: ").strip() for key in ['Tháng', 'Tuần', 'Ngày', 'Thời gian', 'Tên', 'Chi tiết', 'Quan trọng']}
-    if any(e['Ngày'] == su_kien['Ngày'] and e['Tên'] == su_kien['Tên'] for e in lich_trinh_su_kien):
-        print("Sự kiện trùng lặp!")
-        return
-    lich_trinh_su_kien.append(su_kien)
-    print("Đã thêm sự kiện.")
+    su_kien = {
+        'Tháng': input("Nhập tháng (1-12): ").strip(),
+        'Ngày': input("Nhập ngày (1-31): ").strip(),
+        'Thời gian bắt đầu': input("Nhập thời gian bắt đầu (HH:MM): ").strip(),
+        'Thời gian kết thúc': input("Nhập thời gian kết thúc (HH:MM): ").strip(),
+        'Tên sự kiện': input("Nhập tên sự kiện: ").strip(),
+        'Chi tiết': input("Nhập chi tiết sự kiện: ").strip(),
+        'Quan trọng': input("Sự kiện quan trọng? (Có/Không): ").strip().capitalize()
+    }
 
-# Hàm hiển thị lịch trình
+    # Kiểm tra định dạng ngày và thời gian
+    try:
+        datetime.strptime(f"{su_kien['Tháng']}/{su_kien['Ngày']}/2025", "%m/%d/%Y")
+        datetime.strptime(su_kien['Thời gian bắt đầu'], "%H:%M")
+        datetime.strptime(su_kien['Thời gian kết thúc'], "%H:%M")
+    except ValueError:
+        print("Ngày hoặc thời gian không hợp lệ!")
+        return
+
+    # Kiểm tra trùng lặp
+    su_kien_trung = next((e for e in lich_trinh_su_kien if e['Ngày'] == su_kien['Ngày'] and e['Tháng'] == su_kien['Tháng'] and e['Tên sự kiện'] == su_kien['Tên sự kiện']), None)
+    if su_kien_trung:
+        hop_nhat = input("Sự kiện trùng lặp! Hợp nhất không? (Có/Không): ").strip().capitalize()
+        if hop_nhat == "Có":
+            su_kien_trung['Chi tiết'] += " | " + su_kien['Chi tiết']
+            su_kien_trung['Thời gian bắt đầu'] = min(su_kien_trung['Thời gian bắt đầu'], su_kien['Thời gian bắt đầu'])
+            su_kien_trung['Thời gian kết thúc'] = max(su_kien_trung['Thời gian kết thúc'], su_kien['Thời gian kết thúc'])
+            su_kien_trung['Quan trọng'] = "Có" if "Có" in (su_kien_trung['Quan trọng'], su_kien['Quan trọng']) else "Không"
+            print("Sự kiện đã được hợp nhất.")
+        else:
+            print("Sự kiện không được thêm.")
+    else:
+        lich_trinh_su_kien.append(su_kien)
+        print("Sự kiện đã được thêm thành công!")
+    luu_du_lieu()
+
+# Xem lịch trình
 def xem_lich_trinh():
     print("\n--- LỊCH TRÌNH ---")
     if not lich_trinh_su_kien:
         print("Không có sự kiện nào.")
         return
-    for i, e in enumerate(lich_trinh_su_kien, 1):
-        print(f"{i}. {e}")
+    for i, su_kien in enumerate(lich_trinh_su_kien, 1):
+        print(f"\nSự kiện {i}:")
+        for k, v in su_kien.items():
+            print(f"  {k}: {v}")
 
-# Hàm xử lý đăng nhập và tính năng
+# Chỉnh sửa hoặc xóa sự kiện
+def chinh_sua_su_kien():
+    print("\n--- CHỈNH SỬA SỰ KIỆN ---")
+    if not lich_trinh_su_kien:
+        print("Không có sự kiện nào để chỉnh sửa.")
+        return
+    thang = input("Nhập tháng: ").strip()
+    ngay = input("Nhập ngày: ").strip()
+    su_kien_theo_ngay = [e for e in lich_trinh_su_kien if e['Tháng'] == thang and e['Ngày'] == ngay]
+    
+    if not su_kien_theo_ngay:
+        print("Không tìm thấy sự kiện nào.")
+        return
+    
+    for i, e in enumerate(su_kien_theo_ngay, 1):
+        print(f"{i}. {e['Tên sự kiện']} ({e['Thời gian bắt đầu']} - {e['Thời gian kết thúc']})")
+    try:
+        chon = int(input("Chọn số sự kiện để chỉnh sửa: ")) - 1
+        su_kien = su_kien_theo_ngay[chon]
+    except (ValueError, IndexError):
+        print("Lựa chọn không hợp lệ.")
+        return
+    
+    print("1. Cập nhật\n2. Xóa")
+    lua_chon = input("Chọn: ").strip()
+    if lua_chon == "1":
+        su_kien.update({k: input(f"Nhập {k} mới (Enter để giữ nguyên '{su_kien[k]}'): ").strip() or su_kien[k] for k in su_kien})
+        print("Sự kiện đã được cập nhật.")
+    elif lua_chon == "2":
+        lich_trinh_su_kien.remove(su_kien)
+        print("Sự kiện đã bị xóa.")
+    else:
+        print("Lựa chọn không hợp lệ.")
+    luu_du_lieu()
+
+# Tìm kiếm sự kiện
+def tim_kiem_su_kien():
+    print("\n--- TÌM KIẾM SỰ KIỆN ---")
+    tu_khoa = input("Nhập từ khóa (tên hoặc chi tiết): ").strip().lower()
+    ket_qua = [e for e in lich_trinh_su_kien if tu_khoa in e['Tên sự kiện'].lower() or tu_khoa in e['Chi tiết'].lower()]
+    if not ket_qua:
+        print("Không tìm thấy sự kiện nào.")
+        return
+    for i, e in enumerate(ket_qua, 1):
+        print(f"\nKết quả {i}: {e}")
+
+# Sắp xếp lịch trình
+def sap_xep_lich_trinh():
+    print("\n--- SẮP XẾP LỊCH TRÌNH ---")
+    print("1. Theo ngày\n2. Theo mức độ quan trọng")
+    lua_chon = input("Chọn: ").strip()
+    if lua_chon == "1":
+        lich_trinh_su_kien.sort(key=lambda x: (x['Tháng'], x['Ngày'], x['Thời gian bắt đầu']))
+    elif lua_chon == "2":
+        lich_trinh_su_kien.sort(key=lambda x: (x['Quan trọng'] != "Có", x['Tháng'], x['Ngày']))
+    else:
+        print("Lựa chọn không hợp lệ.")
+        return
+    print("Lịch trình đã được sắp xếp.")
+    luu_du_lieu()
+
+# Menu sau đăng nhập
 def menu_sau_dang_nhap():
     while True:
-        lua_chon = input("\n1. Thêm Sự Kiện\n2. Xem Lịch Trình\n3. Đăng Xuất\nChọn: ").strip()
-        if lua_chon == '1':
+        hien_thi_menu("sau_dang_nhap")
+        lua_chon = input("Chọn: ").strip()
+        if lua_chon == "1":
             them_su_kien()
-        elif lua_chon == '2':
+        elif lua_chon == "2":
             xem_lich_trinh()
-        elif lua_chon == '3':
+        elif lua_chon == "3":
+            chinh_sua_su_kien()
+        elif lua_chon == "4":
+            tim_kiem_su_kien()
+        elif lua_chon == "5":
+            sap_xep_lich_trinh()
+        elif lua_chon == "6":
             print("Đã đăng xuất.")
             break
         else:
-            print("Không hợp lệ.")
+            print("Lựa chọn không hợp lệ.")
 
-# Hàm chính
+# Chương trình chính
 def chuong_trinh():
+    tai_du_lieu()
     while True:
-        chon = input("\n1. Đăng Nhập\n2. Tạo Tài Khoản\n3. Thoát\nChọn: ").strip()
-        if chon == '1' and dang_nhap():
-            menu_sau_dang_nhap()
-        elif chon == '2':
+        hien_thi_menu("main")
+        lua_chon = input("Chọn: ").strip()
+        if lua_chon == "1":
+            nguoi_dung = dang_nhap()
+            if nguoi_dung:
+                menu_sau_dang_nhap()
+        elif lua_chon == "2":
             tao_tai_khoan()
-        elif chon == '3':
+        elif lua_chon == "3":
             print("Thoát chương trình.")
             break
         else:
-            print("Không hợp lệ.")
+            print("Lựa chọn không hợp lệ.")
 
-# Chạy chương trình
-chuong_trinh()
+if __name__ == "__main__":
+    chuong_trinh()
