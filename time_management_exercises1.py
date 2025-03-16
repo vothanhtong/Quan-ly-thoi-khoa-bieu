@@ -197,4 +197,6 @@ class QuanLySuKien:
 
 if __name__ == "__main__":
     qlsk = QuanLySuKien()
-    qlsk.chuong_trinh1()
+    qlsk.chuong_trinh1() 
+    # hi
+    
